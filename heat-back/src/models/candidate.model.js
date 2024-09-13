@@ -28,7 +28,7 @@ const Candidate = sequelize.define(
     },
   },
   {
-    timestamps: true, // Esto incluye createdAt y updatedAt
+    timestamps: true,
   }
 );
 
