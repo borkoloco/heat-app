@@ -1,4 +1,4 @@
-const app = require("./src/app"); // Importar app.js desde src
+const app = require("./src/app");
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
