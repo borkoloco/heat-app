@@ -4,16 +4,11 @@ const createUser = async (data) => {
   return await User.create(data);
 };
 
-const getUsers = async () => {
-  return await User.findAll();
-};
-
-const getUserById = async (id) => {
-  return await User.findByPk(id);
+const getUserByEmail = async (email) => {
+  return await User.findOne({ where: { email } });
 };
 
 module.exports = {
   createUser,
-  getUsers,
-  getUserById,
+  getUserByEmail,
 };
