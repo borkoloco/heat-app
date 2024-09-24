@@ -1,25 +1,31 @@
 const express = require("express");
-require("dotenv").config();
-const app = express();
+const cors = require("cors");
 const sequelize = require("./config/database");
 
+const userRouter = require("./routes/user.router");
+const candidateRouter = require("./routes/candidate.router");
+const responseRouter = require("./routes/response.router");
+const vertexaiRouter = require("./routes/vertexai.router");
+
+const app = express();
+
+// // Configurar CORS para permitir solicitudes desde el frontend (puerto 3000)
+// app.use(cors({
+//   origin: "http://localhost:3000", // Permitir solo solicitudes desde el frontend
+//   methods: ["GET", "POST", "PUT", "DELETE"],
+//   credentials: true,
+// }));
+
+app.use(cors());
 app.use(express.json());
 
-const candidateRouter = require("./routes/candidate.router");
-const userRouter = require("./routes/user.router");
-const responseRouter = require("./routes/response.router");
-
-app.use("/api/candidates", candidateRouter);
 app.use("/api/users", userRouter);
+app.use("/api/candidates", candidateRouter);
 app.use("/api/responses", responseRouter);
-
-// Ruta principal de ejemplo
-app.get("/", (req, res) => {
-  res.send("¡Hola, mundo!");
-});
+app.use("/api/vertexai", vertexaiRouter);
 
 sequelize
-  .sync({ force: false })
+  .sync({ alter: true, force: false })
   .then(() => {
     console.log("Modelos sincronizados con la base de datos");
   })

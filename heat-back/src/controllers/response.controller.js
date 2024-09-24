@@ -9,16 +9,18 @@ const createResponse = async (req, res) => {
   }
 };
 
-const getResponses = async (req, res) => {
+const getResponsesByUser = async (req, res) => {
   try {
-    const responses = await responseService.getResponses();
+    const responses = await responseService.getResponsesByUser(
+      req.params.userId
+    );
     res.json(responses);
   } catch (error) {
-    res.status(500).json({ error: "Error al obtener las respuestas" });
+    res.status(500).json({ error: "Error al obtener respuestas" });
   }
 };
 
 module.exports = {
   createResponse,
-  getResponses,
+  getResponsesByUser,
 };

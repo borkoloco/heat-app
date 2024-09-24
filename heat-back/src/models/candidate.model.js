@@ -1,5 +1,6 @@
-const { DataTypes, Sequelize } = require("sequelize");
+const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
+const User = require("./user.model");
 
 const Candidate = sequelize.define(
   "Candidate",
@@ -25,6 +26,14 @@ const Candidate = sequelize.define(
     },
     reminder: {
       type: DataTypes.TEXT,
+    },
+    userId: {
+      type: DataTypes.UUID,
+      references: {
+        model: User,
+        key: "uuid",
+      },
+      allowNull: false,
     },
   },
   {

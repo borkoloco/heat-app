@@ -29,12 +29,12 @@ const Response = sequelize.define(
         key: "uuid",
       },
     },
-    status: {
-      type: DataTypes.STRING,
-      defaultValue: "pending",
-    },
     responseAi: {
       type: DataTypes.JSONB,
+      allowNull: true,
+    },
+    finalScore: {
+      type: DataTypes.STRING, // Principiante, Intermedio, Avanzado
       allowNull: true,
     },
   },
