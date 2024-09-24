@@ -14,8 +14,40 @@ export default function Dashboard() {
   // logout
   const handleLogout = () => {
     localStorage.removeItem("token");
+    setStudents([]); // Limpia el estado de los estudiantes
     router.push("/");
   };
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        router.push("/");
+        return;
+      }
+
+      try {
+        const res = await fetch("http://localhost:4000/api/candidates", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          setStudents(data); // Asegúrate de que la respuesta sea un array de estudiantes
+        } else {
+          console.error("Error al obtener los estudiantes:", res.status);
+        }
+      } catch (error) {
+        console.error("Error obteniendo estudiantes:", error);
+      }
+    };
+
+    fetchStudents(); // Llamar a la función cuando el componente se monta
+  }, [router]); // Asegúrate de que el efecto se ejecute si cambia el `router`
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -81,9 +113,36 @@ export default function Dashboard() {
     }
   };
 
-  const handleSendTestLink = (email) => {
+  // const handleSendTestLink = (email) => {
+  //   const testLink = `${window.location.origin}/start`;
+  //   alert(`Test link sent to ${email}: ${testLink}`);
+  // };
+
+  const handleSendTestLink = async (email) => {
+    // const token = localStorage.getItem("token");
     const testLink = `${window.location.origin}/start`;
-    alert(`Test link sent to ${email}: ${testLink}`);
+
+    try {
+      const res = await fetch(
+        "http://localhost:4000/api/candidates/send-link",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ email, testLink }),
+        }
+      );
+
+      if (res.ok) {
+        alert(`Test link sent to ${email}`);
+      } else {
+        console.error("Error sending email:", res.status);
+      }
+    } catch (error) {
+      console.error("Error sending email:", error);
+    }
   };
 
   return (
