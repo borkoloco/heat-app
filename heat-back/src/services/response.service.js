@@ -4,16 +4,16 @@ const createResponse = async (data) => {
   return await Response.create(data);
 };
 
-const getResponses = async () => {
-  return await Response.findAll();
-};
-
-const getResponseById = async (id) => {
-  return await Response.findByPk(id);
+const getResponsesByUser = async (userId) => {
+  return await Response.findAll({
+    include: {
+      model: Candidate,
+      where: { userId },
+    },
+  });
 };
 
 module.exports = {
   createResponse,
-  getResponses,
-  getResponseById,
+  getResponsesByUser,
 };

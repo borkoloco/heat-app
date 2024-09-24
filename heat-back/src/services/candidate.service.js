@@ -4,16 +4,11 @@ const createCandidate = async (data) => {
   return await Candidate.create(data);
 };
 
-const getCandidates = async () => {
-  return await Candidate.findAll();
-};
-
-const getCandidateById = async (id) => {
-  return await Candidate.findByPk(id);
+const getCandidatesByUser = async (userId) => {
+  return await Candidate.findAll({ where: { userId } });
 };
 
 module.exports = {
   createCandidate,
-  getCandidates,
-  getCandidateById,
+  getCandidatesByUser,
 };

@@ -4,6 +4,6 @@ const responseController = require("../controllers/response.controller");
 const router = express.Router();
 
 router.post("/", responseController.createResponse);
-router.get("/", responseController.getResponses);
+router.get("/user/:userId", responseController.getResponsesByUser);
 
 module.exports = router;
