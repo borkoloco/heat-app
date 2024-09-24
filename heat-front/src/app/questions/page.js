@@ -52,6 +52,47 @@ export default function QuestionsPage() {
   );
 }
 
+
+
+// questions: {
+//   content:
+//     ' **1. ¿Cuál es el pasado simple del verbo "to be"?**\n\na) was\nb) were\nc) been\nd) is\n\n**Respuesta:** a) was\n\n**2. ¿Cuál es el presente perfecto del verbo "to go"?**\n\na) have gone\nb) has gone\nc) went\nd) going\n\n**Respuesta:** a) have gone\n\n**3. ¿Cuál es el futuro simple del verbo "to do"?**\n\na) will do\nb) do\nc) did\nd) doing\n\n**Respuesta:** a) will do',
+//   citationMetadata: {
+//     citations: [],
+//   },
+//   safetyAttributes: {
+//     scores: [0.1, 0.2, 0.1, 0.1, 0.1],
+//     blocked: false,
+//     safetyRatings: [
+//       {
+//         category: "Dangerous Content",
+//         severityScore: 0.1,
+//         probabilityScore: 0.1,
+//         severity: "NEGLIGIBLE",
+//       },
+//       {
+//         category: "Harassment",
+//         probabilityScore: 0.2,
+//         severityScore: 0.1,
+//         severity: "NEGLIGIBLE",
+//       },
+//       {
+//         probabilityScore: 0.1,
+//         severityScore: 0.1,
+//         severity: "NEGLIGIBLE",
+//         category: "Hate Speech",
+//       },
+//       {
+//         probabilityScore: 0.1,
+//         category: "Sexually Explicit",
+//         severityScore: 0.1,
+//         severity: "NEGLIGIBLE",
+//       },
+//     ],
+//     categories: ["Derogatory", "Insult", "Profanity", "Sexual", "Toxic"],
+//   },
+
+
 // import { useState, useEffect } from "react";
 // import { useRouter } from "next/router";
 // import QuestionCard from "../components/QuestionCard";

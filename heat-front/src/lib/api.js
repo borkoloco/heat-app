@@ -1,5 +1,5 @@
 export const fetchQuestions = async () => {
-  const res = await fetch("/api/vertexai/questions");
+  const res = await fetch("http://localhost:4000/api/vertexai/questions");
   if (!res.ok) throw new Error("Error al obtener las preguntas");
   const data = await res.json();
   return data.questions;
@@ -9,7 +9,7 @@ export const uploadAudio = async (file) => {
   const formData = new FormData();
   formData.append("audio", file);
 
-  const res = await fetch("/upload-audio", {
+  const res = await fetch("http://localhost:4000/api/vertexai/upload-audio", {
     method: "POST",
     body: formData,
   });

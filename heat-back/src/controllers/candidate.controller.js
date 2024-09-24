@@ -1,4 +1,5 @@
 const candidateService = require("../services/candidate.service");
+const { sendTestLinkEmail } = require("../services/email.service");
 
 const createCandidate = async (req, res) => {
   try {
@@ -25,17 +26,27 @@ const createCandidate = async (req, res) => {
 };
 
 const getCandidatesByUser = async (req, res) => {
+  const userId = req.user.id;
   try {
-    const candidates = await candidateService.getCandidatesByUser(
-      req.params.userId
-    );
+    const candidates = await candidateService.getCandidatesByUser(userId);
     res.json(candidates);
   } catch (error) {
     res.status(500).json({ error: "Error al obtener candidatos" });
   }
 };
 
+const sendTestLink = async (req, res) => {
+  const { email, testLink } = req.body;
+  try {
+    await sendTestLinkEmail(email, testLink);
+    res.status(200).json({ message: "Correo enviado correctamente" });
+  } catch (error) {
+    res.status(500).json({ message: "Error al enviar el correo" });
+  }
+};
+
 module.exports = {
+  sendTestLink,
   createCandidate,
   getCandidatesByUser,
 };
