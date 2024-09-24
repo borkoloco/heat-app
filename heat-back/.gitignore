@@ -26,3 +26,6 @@ ngrok
 *.njsproj
 *.sln
 *.sw?
+
+#apis 
+foodexpress-fc794-a3fdc1348f9c.json
