@@ -5,6 +5,7 @@ const {
 } = require("../services/email.service");
 const Candidate = require("../models/candidate.model");
 const Response = require("../models/response.model");
+const User = require("../models/user.model");
 
 const createCandidate = async (req, res) => {
   try {
@@ -80,10 +81,16 @@ const sendTestResults = async (req, res) => {
 const getCandidatesWithResults = async (req, res) => {
   try {
     const candidates = await Candidate.findAll({
-      include: {
-        model: Response,
-        as: "responses",
-      },
+      include: [
+        {
+          model: Response,
+          as: "responses",
+        },
+        {
+          model: User,
+          attributes: ["firstName", "lastName", "uuid"], // Incluimos userId (uuid)
+        },
+      ],
     });
 
     const candidatesWithResults = candidates.map((candidate) => {
@@ -97,6 +104,9 @@ const getCandidatesWithResults = async (req, res) => {
         audioScore: response ? response.responseAudio : null,
         finalResult: response ? response.finalResult : null,
         status: response ? response.status : null,
+        userFirstName: candidate.User ? candidate.User.firstName : null,
+        userLastName: candidate.User ? candidate.User.lastName : null,
+        userId: candidate.User ? candidate.User.uuid : null,
       };
     });
 
