@@ -5,15 +5,7 @@ const Candidate = require("./candidate.model");
 const Response = sequelize.define(
   "Response",
   {
-    responseQ1: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    responseQ2: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    responseQ3: {
+    responseTest: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -29,13 +21,17 @@ const Response = sequelize.define(
         key: "uuid",
       },
     },
-    responseAi: {
-      type: DataTypes.JSONB,
+    finalScore: {
+      type: DataTypes.STRING, // Guardará el puntaje final calculado
       allowNull: true,
     },
-    finalScore: {
-      type: DataTypes.STRING, // Principiante, Intermedio, Avanzado
+    finalResult: {
+      type: DataTypes.STRING, // Principiante, Intermedio, Avanzado, etc.
       allowNull: true,
+    },
+    status: {
+      type: DataTypes.ENUM("pending", "complete"),
+      defaultValue: "pending",
     },
   },
   {
