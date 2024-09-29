@@ -10,6 +10,8 @@ export default function Dashboard() {
     lastName: "",
     email: "",
   });
+  const [selectedUser, setSelectedUser] = useState("All");
+  const [selectedStatus, setSelectedStatus] = useState("All");
   const router = useRouter();
 
   const handleLogout = () => {
@@ -28,7 +30,7 @@ export default function Dashboard() {
 
       try {
         const res = await fetch(
-          "http://localhost:4000/api/candidates/results",
+          process.env.NEXT_PUBLIC_API_URL + "/candidates/results",
           {
             method: "GET",
             headers: {
@@ -61,13 +63,16 @@ export default function Dashboard() {
       }
 
       try {
-        const res = await fetch("http://localhost:4000/api/users/dashboard", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await fetch(
+          process.env.NEXT_PUBLIC_API_URL + "/users/dashboard",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (res.status === 401 || res.status === 403) {
           router.push("/");
@@ -92,7 +97,7 @@ export default function Dashboard() {
     e.preventDefault();
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch("http://localhost:4000/api/candidates", {
+      const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/candidates", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -127,7 +132,7 @@ export default function Dashboard() {
 
     try {
       const res = await fetch(
-        "http://localhost:4000/api/candidates/send-link",
+        process.env.NEXT_PUBLIC_API_URL + "/candidates/send-link",
         {
           method: "POST",
           headers: {
@@ -156,7 +161,7 @@ export default function Dashboard() {
   const handleSendResults = async (student) => {
     try {
       const res = await fetch(
-        "http://localhost:4000/api/candidates/send-results",
+        process.env.NEXT_PUBLIC_API_URL + "/candidates/send-results",
         {
           method: "POST",
           headers: {
@@ -181,6 +186,14 @@ export default function Dashboard() {
     }
   };
 
+  // Filtros
+  const filteredStudents = students.filter((student) => {
+    const userMatch = selectedUser === "All" || student.userId === selectedUser;
+    const statusMatch =
+      selectedStatus === "All" || student.status === selectedStatus;
+    return userMatch && statusMatch;
+  });
+
   return (
     <div className="h-screen flex flex-col items-center p-8">
       <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
@@ -191,6 +204,37 @@ export default function Dashboard() {
       >
         Logout
       </button>
+
+      {/* Filtros de User y Status */}
+      <div className="flex space-x-4 mb-6">
+        <select
+          value={selectedUser}
+          onChange={(e) => setSelectedUser(e.target.value)}
+          className="border p-2 rounded"
+        >
+          <option value="All">All Users</option>
+          {students.map((student) => {
+            return (
+              <option key={student.userId} value={student.userId}>
+                {student.userFirstName && student.userLastName
+                  ? `${student.userFirstName} ${student.userLastName}`
+                  : "No User Available"}
+              </option>
+            );
+          })}
+        </select>
+
+        <select
+          value={selectedStatus}
+          onChange={(e) => setSelectedStatus(e.target.value)}
+          className="border p-2 rounded"
+        >
+          <option value="All">All Statuses</option>
+          <option value="pending">Pending</option>
+          <option value="complete">Complete</option>
+          <option value="None">None</option>
+        </select>
+      </div>
 
       <form onSubmit={handleCreateStudent} className="mb-6">
         <input
@@ -224,55 +268,56 @@ export default function Dashboard() {
 
       <h2 className="text-2xl font-bold mb-4">Students</h2>
 
-      {students && students.length === 0 ? (
-        <p className="text-lg">There are no students registered yet.</p>
+      {filteredStudents.length === 0 ? (
+        <p className="text-lg">No students match the selected filters.</p>
       ) : (
-        students && (
-          <ul className="w-full max-w-md">
-            {students.map((student) => (
-              <li
-                key={student.uuid}
-                className="flex justify-between items-center mb-4"
-              >
-                <span>
-                  {student.firstName} {student.lastName}
-                </span>
-                <span>
-                  {student.finalResult
-                    ? `${student.finalResult} (${parseFloat(
-                        student.testScore || 0
-                      ).toFixed(1)}% / ${parseFloat(
-                        student.audioScore || 0
-                      ).toFixed(1)}%)`
-                    : "No test score yet"}{" "}
-                  - Status: {student.status || "None"}
-                </span>
+        <ul className="w-full max-w-md">
+          {filteredStudents.map((student) => (
+            <li
+              key={student.uuid}
+              className="flex justify-between items-center mb-4"
+            >
+              <span>
+                {student.firstName} {student.lastName}
+              </span>
+              <span>
+                {student.finalResult
+                  ? `${student.finalResult} (${parseFloat(
+                      student.testScore || 0
+                    ).toFixed(1)}% / ${parseFloat(
+                      student.audioScore || 0
+                    ).toFixed(1)}%)`
+                  : "No test score yet"}{" "}
+                - Status: {student.status || "None"} - User:{" "}
+                {student.userFirstName && student.userLastName
+                  ? `${student.userFirstName} ${student.userLastName}`
+                  : "No User Available"}
+              </span>
 
-                {student.finalResult ? (
-                  <button
-                    onClick={() => handleSendResults(student)}
-                    className="bg-blue-500 text-white p-2 rounded"
-                  >
-                    Send Results
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handleSendTestLink(student)}
-                    className={`p-2 rounded ${
-                      student.reminder === null
-                        ? "bg-green-500 text-white"
-                        : "bg-yellow-500 text-white"
-                    }`}
-                  >
-                    {student.reminder === null
-                      ? "Send Test Link"
-                      : "Resend Email Link"}
-                  </button>
-                )}
-              </li>
-            ))}
-          </ul>
-        )
+              {student.finalResult ? (
+                <button
+                  onClick={() => handleSendResults(student)}
+                  className="bg-blue-500 text-white p-2 rounded"
+                >
+                  Send Results
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleSendTestLink(student)}
+                  className={`p-2 rounded ${
+                    student.reminder === null
+                      ? "bg-green-500 text-white"
+                      : "bg-yellow-500 text-white"
+                  }`}
+                >
+                  {student.reminder === null
+                    ? "Send Test Link"
+                    : "Resend Email Link"}
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );
