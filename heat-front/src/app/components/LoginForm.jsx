@@ -19,7 +19,7 @@ export default function LoginForm() {
       });
       if (res.ok) {
         const data = await res.json();
-        localStorage.setItem("token", data.token); // Guardar el token en localStorage
+        localStorage.setItem("token", data.token);
         router.push("/dashboard");
       } else {
         alert("Login failed. Please check your credentials.");
