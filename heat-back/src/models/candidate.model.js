@@ -25,8 +25,10 @@ const Candidate = sequelize.define(
       unique: true,
     },
     reminder: {
-      type: DataTypes.TEXT,
+      type: DataTypes.BOOLEAN,
+      defaultValue: null,
     },
+
     userId: {
       type: DataTypes.UUID,
       references: {

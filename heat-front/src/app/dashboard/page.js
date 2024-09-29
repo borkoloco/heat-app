@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
@@ -11,10 +12,9 @@ export default function Dashboard() {
   });
   const router = useRouter();
 
-  // logout
   const handleLogout = () => {
     localStorage.removeItem("token");
-    setStudents([]); // Limpia el estado de los estudiantes
+    setStudents([]);
     router.push("/");
   };
 
@@ -27,35 +27,35 @@ export default function Dashboard() {
       }
 
       try {
-        const res = await fetch("http://localhost:4000/api/candidates", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await fetch(
+          "http://localhost:4000/api/candidates/results",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (res.ok) {
           const data = await res.json();
-          setStudents(data); // Asegúrate de que la respuesta sea un array de estudiantes
+          setStudents(data);
         } else {
-          console.error("Error al obtener los estudiantes:", res.status);
+          console.error("Error fetching students:", res.status);
         }
       } catch (error) {
-        console.error("Error obteniendo estudiantes:", error);
+        console.error("Error fetching students:", error);
       }
     };
 
-    fetchStudents(); // Llamar a la función cuando el componente se monta
-  }, [router]); // Asegúrate de que el efecto se ejecute si cambia el `router`
+    fetchStudents();
+  }, [router]);
 
   useEffect(() => {
     const checkAuth = async () => {
       const token = localStorage.getItem("token");
-      console.log("Token en localStorage:", token);
-
       if (!token) {
-        console.log("Token no encontrado, redirigiendo...");
         router.push("/");
         return;
       }
@@ -70,15 +70,14 @@ export default function Dashboard() {
         });
 
         if (res.status === 401 || res.status === 403) {
-          console.log("Usuario no autorizado, redirigiendo...");
           router.push("/");
           return;
         }
 
         const data = await res.json();
-        console.log("Datos recibidos del servidor:", data);
+        console.log("Dashboard data:", data);
       } catch (error) {
-        console.error("Error en la autenticación:", error);
+        console.error("Error checking authentication:", error);
       }
     };
 
@@ -106,21 +105,25 @@ export default function Dashboard() {
         setStudents([...students, student]);
         setNewStudent({ firstName: "", lastName: "", email: "" });
       } else {
-        console.error("Error al crear el estudiante:", res.status);
+        console.error("Error creating student:", res.status);
       }
     } catch (error) {
-      console.error("Error creando estudiante:", error);
+      console.error("Error creating student:", error);
     }
   };
 
-  // const handleSendTestLink = (email) => {
-  //   const testLink = `${window.location.origin}/start`;
-  //   alert(`Test link sent to ${email}: ${testLink}`);
-  // };
+  const updateStudentReminder = (studentId, newReminderValue) => {
+    setStudents((prevStudents) =>
+      prevStudents.map((student) =>
+        student.uuid === studentId
+          ? { ...student, reminder: newReminderValue }
+          : student
+      )
+    );
+  };
 
-  const handleSendTestLink = async (email) => {
-    // const token = localStorage.getItem("token");
-    const testLink = `${window.location.origin}/start`;
+  const handleSendTestLink = async (student) => {
+    const testLink = `${window.location.origin}/start?candidateId=${student.uuid}`;
 
     try {
       const res = await fetch(
@@ -129,19 +132,52 @@ export default function Dashboard() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            // Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ email, testLink }),
+          body: JSON.stringify({
+            email: student.email,
+            testLink,
+            candidateId: student.uuid,
+          }),
         }
       );
 
       if (res.ok) {
-        alert(`Test link sent to ${email}`);
+        alert(`Test link sent to ${student.email}`);
+        const updatedReminderValue = student.reminder === null ? false : true;
+        updateStudentReminder(student.uuid, updatedReminderValue);
       } else {
-        console.error("Error sending email:", res.status);
+        console.error("Error sending test link email:", res.status);
       }
     } catch (error) {
-      console.error("Error sending email:", error);
+      console.error("Error sending test link email:", error);
+    }
+  };
+
+  const handleSendResults = async (student) => {
+    try {
+      const res = await fetch(
+        "http://localhost:4000/api/candidates/send-results",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: student.email,
+            testScore: student.testScore,
+            audioScore: student.audioScore,
+            finalResult: student.finalResult,
+          }),
+        }
+      );
+
+      if (res.ok) {
+        alert(`Test results sent to ${student.email}`);
+      } else {
+        console.error("Error sending results email:", res.status);
+      }
+    } catch (error) {
+      console.error("Error sending results email:", error);
     }
   };
 
@@ -149,7 +185,6 @@ export default function Dashboard() {
     <div className="h-screen flex flex-col items-center p-8">
       <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
 
-      {/* Botón de Logout */}
       <button
         onClick={handleLogout}
         className="bg-red-500 text-white p-2 rounded mb-6"
@@ -202,12 +237,38 @@ export default function Dashboard() {
                 <span>
                   {student.firstName} {student.lastName}
                 </span>
-                <button
-                  onClick={() => handleSendTestLink(student.email)}
-                  className="bg-green-500 text-white p-2 rounded"
-                >
-                  Send Test Link
-                </button>
+                <span>
+                  {student.finalResult
+                    ? `${student.finalResult} (${parseFloat(
+                        student.testScore || 0
+                      ).toFixed(1)}% / ${parseFloat(
+                        student.audioScore || 0
+                      ).toFixed(1)}%)`
+                    : "No test score yet"}{" "}
+                  - Status: {student.status || "None"}
+                </span>
+
+                {student.finalResult ? (
+                  <button
+                    onClick={() => handleSendResults(student)}
+                    className="bg-blue-500 text-white p-2 rounded"
+                  >
+                    Send Results
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => handleSendTestLink(student)}
+                    className={`p-2 rounded ${
+                      student.reminder === null
+                        ? "bg-green-500 text-white"
+                        : "bg-yellow-500 text-white"
+                    }`}
+                  >
+                    {student.reminder === null
+                      ? "Send Test Link"
+                      : "Resend Email Link"}
+                  </button>
+                )}
               </li>
             ))}
           </ul>
