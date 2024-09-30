@@ -31,6 +31,7 @@ export default function QuestionsPage() {
       try {
         const data = await fetchQuestions();
         const parsedQuestions = parseQuestions(data.questions);
+        console.log(parsedQuestions);
         setQuestions(parsedQuestions);
 
         const correctAns = parsedQuestions.map((q) => q.correctAnswer);

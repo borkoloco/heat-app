@@ -1,6 +1,6 @@
 export function parseQuestions(content) {
   // Split based on the question identifier (e.g., **Question1:**, **Question2:**, etc.)
-  const questionBlocks = content.split(/\*\*Question\d+:\*\*/).slice(1); // Remove the first empty element
+  const questionBlocks = content.split(/\*\*QUESTION\d+:\*\*/).slice(1); // Remove the first empty element
 
   return questionBlocks.map((block, index) => {
     // Extract the question text before **OPTIONS:**
