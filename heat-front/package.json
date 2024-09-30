@@ -17,6 +17,7 @@
     "recorder-js": "^1.0.7"
   },
   "devDependencies": {
+    "@flydotio/dockerfile": "^0.5.9",
     "eslint": "^8",
     "eslint-config-next": "14.2.10",
     "postcss": "^8",
