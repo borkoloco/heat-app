@@ -4,55 +4,58 @@ const fs = require("fs");
 const sdk = require("microsoft-cognitiveservices-speech-sdk");
 
 const generateQuestions = async () => {
-  const questions = {
-    content:
-      " **Question 1:**\n\nWhich of the following sentences is grammatically correct?\n\n(A) The boy kicked the ball.\n(B) The ball kicked the boy.\n(C) The ball was kicked by the boy.\n(D) The boy was kicked by the ball.\n\n**Correct answer:** (C) The ball was kicked by the boy.\n\n**Question 2:**\n\nWhich of the following sentences is grammatically correct?\n\n(A) I am going to the store.\n(B) I am going to store.\n(C) I go to the store.\n(D) I go to store.\n\n**Correct answer:** (A) I am going to the store.\n\n**Question 3:**\n\nWhich of the following sentences is grammatically correct?\n\n(A) The man gave the woman a book.\n(B) The man gave a book the woman.\n(C) The man gave the woman book.\n(D) The man gave a book woman.\n\n**Correct answer:** (A) The man gave the woman a book.",
+  const projectId = process.env.GOOGLE_PROJECT_ID;
+  const location = "us-central1";
+  const model = "text-bison";
+
+  const auth = new GoogleAuth({
+    keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+    scopes: ["https://www.googleapis.com/auth/cloud-platform"],
+  });
+
+  const accessToken = await auth.getAccessToken();
+  const url = `https://us-central1-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/${model}:predict`;
+
+  const prompt = `
+  Generate 3 English grammar multiple-choice questions in the following format:
+  
+  **Question 1:**
+
+  {Insert the question text here}
+
+  (A) {Option A}
+  (B) {Option B}
+  (C) {Option C}
+  (D) {Option D}
+
+  **Correct answer:** ({Correct option in parentheses}) {Correct answer text}
+
+  Make sure each question follows this exact format.
+  `;
+
+  const requestBody = {
+    instances: [{ prompt }],
+    parameters: {
+      temperature: 0.7,
+      maxOutputTokens: 512,
+      topK: 20,
+      topP: 0.95,
+    },
   };
-  return questions;
+
+  try {
+    const response = await axios.post(url, requestBody, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data.predictions[0];
+  } catch (error) {
+    console.error("Error generating questions with Vertex AI:", error.message);
+    throw new Error("Question generation failed.");
+  }
 };
-//----------------------------------------------------------------------------------------
-//   const projectId = process.env.GOOGLE_PROJECT_ID;
-//   const location = "us-central1";
-//   const model = "text-bison";
-
-//   // Configurar la autenticación
-//   const auth = new GoogleAuth({
-//     keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-//     scopes: ["https://www.googleapis.com/auth/cloud-platform"],
-//   });
-
-//   const accessToken = await auth.getAccessToken();
-//   const url = `https://us-central1-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/${model}:predict`;
-
-//   // Prompt para generar 3 preguntas
-//   const prompt =
-//     "Generate 3 English grammar questions with multiple choice options, include 4 options for each question, and specify the correct answer.";
-
-//   const requestBody = {
-//     instances: [{ prompt }],
-//     parameters: {
-//       temperature: 0.2,
-//       maxOutputTokens: 512,
-//       topK: 40,
-//       topP: 0.95,
-//     },
-//   };
-
-//   try {
-//     const response = await axios.post(url, requestBody, {
-//       headers: {
-//         Authorization: `Bearer ${accessToken}`,
-//         "Content-Type": "application/json",
-//       },
-//     });
-//     return response.data.predictions[0]; // Devolver las preguntas generadas
-//   } catch (error) {
-//     console.error("Error generating questions with Vertex AI:", error.message);
-//     throw new Error("Question generation failed.");
-//   }
-// };
-
-//----------------------------------------------------------------------------------------------
 
 const calculateAverageAccuracyScore = (evaluationResult) => {
   let wordTotalScore = 0;

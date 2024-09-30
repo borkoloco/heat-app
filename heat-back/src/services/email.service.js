@@ -13,7 +13,7 @@ const sendTestLinkEmail = async (email, testLink) => {
     from: process.env.EMAIL_USER,
     to: email,
     subject: "Access to your test",
-    text: `Click on the following link to access your test: ${testLink}`,
+    text: `Click on the following link to START your test: ${testLink}`,
   };
 
   try {

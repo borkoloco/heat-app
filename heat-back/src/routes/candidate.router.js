@@ -16,4 +16,10 @@ router.post("/send-link", candidateController.sendTestLink);
 
 router.post("/send-results", candidateController.sendTestResults);
 
+router.delete(
+  "/:candidateId",
+  authenticateToken,
+  candidateController.deleteCandidate
+);
+
 module.exports = router;
