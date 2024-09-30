@@ -13,9 +13,9 @@ export function parseQuestions(content) {
     );
     const optionsText = optionsMatch ? optionsMatch[1].trim() : null;
 
-    // Extract the answer after **Answer\d+:**
-    const answerMatch = block.match(/\*\*Answer\d+:\*\*(.*)/s);
-    const correctAnswer = answerMatch ? answerMatch[1].trim() : null;
+    // Extract the answer after **Answer\d+:** and capture only the letter in parentheses
+    const answerMatch = block.match(/\*\*Answer\d+:\*\*\((.)\)/);
+    const correctAnswer = answerMatch ? answerMatch[1].trim() : null; // Extract just the letter
 
     // Split the options into an array, cleaning up any extra spaces and empty lines
     const options = optionsText
@@ -35,10 +35,52 @@ export function parseQuestions(content) {
     return {
       question: questionText,
       options: options,
-      correctAnswer: correctAnswer,
+      correctAnswer: correctAnswer, // Now contains only the letter
     };
   });
 }
+
+// export function parseQuestions(content) {
+//   // Split based on the question identifier (e.g., **Question1:**, **Question2:**, etc.)
+//   const questionBlocks = content.split(/\*\*Question\d+:\*\*/).slice(1); // Remove the first empty element
+
+//   return questionBlocks.map((block, index) => {
+//     // Adjusted regex to match any content before **OPTIONS:**
+//     const questionMatch = block.match(/(.*?)\*\*OPTIONS:\*\*/s);
+//     const questionText = questionMatch ? questionMatch[1].trim() : null;
+
+//     // Extract the options between **OPTIONS:** and **Answer\d+:**
+//     const optionsMatch = block.match(
+//       /\*\*OPTIONS:\*\*(.*?)\*\*Answer\d+:\*\*/s
+//     );
+//     const optionsText = optionsMatch ? optionsMatch[1].trim() : null;
+
+//     // Extract the answer after **Answer\d+:**
+//     const answerMatch = block.match(/\*\*Answer\d+:\*\*(.*)/s);
+//     const correctAnswer = answerMatch ? answerMatch[1].trim() : null;
+
+//     // Split the options into an array, cleaning up any extra spaces and empty lines
+//     const options = optionsText
+//       ? optionsText
+//           .split("\n")
+//           .map((option) => option.trim())
+//           .filter((option) => option)
+//       : [];
+
+//     // Debugging logs
+//     console.log({
+//       questionText,
+//       options,
+//       correctAnswer,
+//     });
+
+//     return {
+//       question: questionText,
+//       options: options,
+//       correctAnswer: correctAnswer,
+//     };
+//   });
+// }
 
 // export function parseQuestions(content) {
 //   const questionBlocks = content.split(/\*\*Question\d+:\*\*/).slice(1);
