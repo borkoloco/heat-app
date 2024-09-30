@@ -47,6 +47,7 @@ export default function QuestionsPage() {
 
   const handleAnswer = (answer) => {
     const answerLetter = answer.match(/\((.)\)/)[1];
+    console.log("rta", answerLetter);
 
     setAnswers([...answers, answerLetter]);
 
