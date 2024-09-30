@@ -3,6 +3,11 @@ const { GoogleAuth } = require("google-auth-library");
 const fs = require("fs");
 const sdk = require("microsoft-cognitiveservices-speech-sdk");
 
+// Verificar que la variable de entorno esté configurada correctamente
+if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+  throw new Error("El cuestionario no esta disponible, intenta mas tarde.");
+}
+
 const generateQuestions = async () => {
   const projectId = process.env.GOOGLE_PROJECT_ID;
   const location = "us-central1";
