@@ -1,7 +1,8 @@
 export const fetchQuestions = async () => {
-  const res = await fetch("http://localhost:4000/api/ai/questions");
+  const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/ai/questions");
   if (!res.ok) throw new Error("Error al obtener las preguntas");
   const data = await res.json();
+  // console.log(data);
 
   return data;
 };
@@ -11,10 +12,13 @@ export const uploadAudio = async (audioFile) => {
   formData.append("audio", audioFile);
 
   try {
-    const response = await fetch("http://localhost:4000/api/ai/upload-audio", {
-      method: "POST",
-      body: formData,
-    });
+    const response = await fetch(
+      process.env.NEXT_PUBLIC_API_URL + "/ai/upload-audio",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Error al subir el audio");
@@ -28,7 +32,7 @@ export const uploadAudio = async (audioFile) => {
 };
 
 export const submitTest = async (answers) => {
-  const res = await fetch("http://localhost:4000/api/ai/submit-test", {
+  const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/ai/submit-test", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -43,7 +47,7 @@ export const submitTest = async (answers) => {
 export const submitFinalEvaluation = async (finalEvaluationData) => {
   try {
     const response = await fetch(
-      "http://localhost:4000/api/ai/final-evaluation",
+      process.env.NEXT_PUBLIC_API_URL + "/ai/final-evaluation",
       {
         method: "POST",
         headers: {

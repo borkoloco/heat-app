@@ -10,10 +10,10 @@ const transporter = nodemailer.createTransport({
 
 const sendTestLinkEmail = async (email, testLink) => {
   const mailOptions = {
-    from: "borkoloco@gmail.com",
+    from: process.env.EMAIL_USER,
     to: email,
     subject: "Access to your test",
-    text: `Click on the following link to access your test: ${testLink}`,
+    text: `Click on the following link to START your test: ${testLink}`,
   };
 
   try {
@@ -31,7 +31,7 @@ const sendTestResultsEmail = async (
   finalResult
 ) => {
   const mailOptions = {
-    from: "borkoloco@gmail.com",
+    from: process.env.EMAIL_USER,
     to: email,
     subject: "Your Test Results",
     text: `Here are your test results:\n\nTest Score: ${testScore}%\nAudio Score: ${audioScore}%\nLevel: ${finalResult}`,
