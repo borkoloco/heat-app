@@ -30,6 +30,8 @@ export default function QuestionsPage() {
     const getQuestions = async () => {
       try {
         const data = await fetchQuestions();
+        console.log(data);
+        // const parsedQuestions = parseQuestions(data);
         const parsedQuestions = parseQuestions(data.questions);
         console.log(parsedQuestions);
         setQuestions(parsedQuestions);
