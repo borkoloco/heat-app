@@ -4,12 +4,12 @@ const pg = require("pg");
 // const sequelize = new Sequelize(process.env.DB_DEPLOY, {
 //RAILWAY
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
-  logging: false,
-  native: false,
-  dialectmodule: pg,
+  dialect: "postgres",
+  protocol: "postgres",
   dialectOptions: {
     ssl: {
       require: true,
+      rejectUnauthorized: false,
     },
   },
 });
