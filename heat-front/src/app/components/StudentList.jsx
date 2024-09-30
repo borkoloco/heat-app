@@ -7,7 +7,7 @@ export default function StudentList({
   handleDeleteStudent,
 }) {
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto w-full">
       <table className="min-w-full bg-white shadow-md rounded-lg">
         <thead>
           <tr className="bg-gray-200 text-gray-600 text-left">
