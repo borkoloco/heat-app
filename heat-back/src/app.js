@@ -11,7 +11,7 @@ const aiRouter = require("./routes/ai.router");
 const app = express();
 
 const corsOptions = {
-  origin: "https://heat-app.onrender.com/",
+  origin: "https://heat-app.onrender.com",
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   credentials: true,
   allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept"],
