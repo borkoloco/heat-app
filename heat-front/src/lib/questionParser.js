@@ -1,31 +1,23 @@
 export function parseQuestions(content) {
-  // Dividimos el contenido en bloques de preguntas usando la etiqueta **Question
-  const questionBlocks = content.split(/(?=\*\*Question\d+\*\*)/);
+  const questionBlocks = content.split(/\*\*Question\d+:\*\*/).slice(1);
 
-  return questionBlocks.map((block) => {
-    // Extraemos la pregunta y las opciones usando expresiones regulares
-    const questionMatch = block.match(
-      /\*\*Question\d+\*\*(.*?)\*\*OPTIONS\*\*/
-    );
-    const optionsMatch = block.match(/\*\*OPTIONS\*\*(.*?)\*\*Answer\d+\*\*/);
-    const answerMatch = block.match(/\*\*Answer\d+\*\*(.*)/);
-
+  return questionBlocks.map((block, index) => {
+    const questionMatch = block.match(/(.*?)\*\*OPTIONS:\*\*/);
     const questionText = questionMatch ? questionMatch[1].trim() : null;
+
+    const optionsMatch = block.match(/\*\*OPTIONS:\*\*(.*?)\*\*Answer\d+:\*\*/);
     const optionsText = optionsMatch ? optionsMatch[1].trim() : null;
+
+    const answerMatch = block.match(/\*\*Answer\d+:\*\*(.*)/);
     const correctAnswer = answerMatch ? answerMatch[1].trim() : null;
 
-    // Dividimos las opciones por cada letra (A), (B), (C), (D)
     const options = optionsText
-      ? optionsText
-          .split(/\*\*(A|B|C|D)\*\*/)
-          .filter((option) => option.trim() !== "")
+      ? optionsText.split("\n").map((option) => option.trim())
       : [];
 
     return {
       question: questionText,
-      options: options.map(
-        (opt, index) => `(${String.fromCharCode(65 + index)}) ${opt.trim()}`
-      ),
+      options: options,
       correctAnswer: correctAnswer,
     };
   });
