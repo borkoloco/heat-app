@@ -24,16 +24,8 @@ const generateQuestions = async () => {
   const prompt = `
   Generate 3 English grammar multiple-choice questions in the following format:
   
-  **Question 1:**
-
-  {Insert the question text here}
-
-  (A) {Option A}
-  (B) {Option B}
-  (C) {Option C}
-  (D) {Option D}
-
-  **Correct answer:** ({Correct option in parentheses}) {Correct answer text}
+  **Question1**{here comes the question1}**OPTIONS**(A){Option A}**(B){Option B}**(C){Option C}**(D){OptionD}**Answer1{correct answer}**Question2**{here comes the question2}**OPTIONS**(A){Option A}**(B){Option B}**(C){Option C}**(D){OptionD}**Answer2{correct answer}**Question3**{here comes the question}**OPTIONS**(A){Option A}**(B){Option B}**(C){Option C}**(D){OptionD}**Answer3{correct answer}**
+  
 
   Make sure each question follows this exact format.
   `;
@@ -55,6 +47,7 @@ const generateQuestions = async () => {
         "Content-Type": "application/json",
       },
     });
+    console.log(response.data.predictions[0]);
     return response.data.predictions[0];
   } catch (error) {
     console.error("Error generating questions with Vertex AI:", error.message);

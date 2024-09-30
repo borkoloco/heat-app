@@ -1,47 +1,80 @@
 export function parseQuestions(content) {
-  // Dividimos el contenido por cada pregunta
-  const questionBlocks = content.split(/\*\*Question\s*\d+:\*\*/);
+  // Dividimos el contenido en bloques de preguntas usando la etiqueta **Question
+  const questionBlocks = content.split(/(?=\*\*Question\d+\*\*)/);
 
-  return questionBlocks.slice(1).map((block) => {
-    // Dividimos la parte de la pregunta y la parte de la respuesta correcta
-    const [questionPart, correctAnswerPart] = block.split(
-      "**Correct answer:**"
+  return questionBlocks.map((block) => {
+    // Extraemos la pregunta y las opciones usando expresiones regulares
+    const questionMatch = block.match(
+      /\*\*Question\d+\*\*(.*?)\*\*OPTIONS\*\*/
     );
+    const optionsMatch = block.match(/\*\*OPTIONS\*\*(.*?)\*\*Answer\d+\*\*/);
+    const answerMatch = block.match(/\*\*Answer\d+\*\*(.*)/);
 
-    // Obtenemos todas las líneas de la pregunta y las limpiamos
-    const questionLines = questionPart
-      .trim()
-      .split("\n")
-      .filter((line) => line.trim() !== "");
+    const questionText = questionMatch ? questionMatch[1].trim() : null;
+    const optionsText = optionsMatch ? optionsMatch[1].trim() : null;
+    const correctAnswer = answerMatch ? answerMatch[1].trim() : null;
 
-    // La primera línea es la pregunta
-    const questionText = questionLines[0].trim();
-
-    // Revisa si hay texto adicional después de la pregunta y antes de las opciones
-    let additionalText = "";
-    let optionsStartIndex = 1;
-
-    if (!questionLines[1].startsWith("(A)")) {
-      additionalText = questionLines[1].trim();
-      optionsStartIndex = 2;
-    }
-
-    // Capturamos las opciones, asegurando que se incluyan todas
-    const options = questionLines.slice(optionsStartIndex).map((option) => {
-      return option.trim();
-    });
-
-    // Extraemos la respuesta correcta entre paréntesis
-    const correctAnswer = correctAnswerPart.match(/\((.*?)\)/)[1].trim();
+    // Dividimos las opciones por cada letra (A), (B), (C), (D)
+    const options = optionsText
+      ? optionsText
+          .split(/\*\*(A|B|C|D)\*\*/)
+          .filter((option) => option.trim() !== "")
+      : [];
 
     return {
       question: questionText,
-      additionalText: additionalText || null, // Si no hay texto adicional, dejamos null
-      options: options,
+      options: options.map(
+        (opt, index) => `(${String.fromCharCode(65 + index)}) ${opt.trim()}`
+      ),
       correctAnswer: correctAnswer,
     };
   });
 }
+
+// export function parseQuestions(content) {
+//   // Dividimos el contenido por cada pregunta
+//   const questionBlocks = content.split(/\*\*Question\s*\d+:\*\*/);
+
+//   return questionBlocks.slice(1).map((block) => {
+//     // Dividimos la parte de la pregunta y la parte de la respuesta correcta
+//     const [questionPart, correctAnswerPart] = block.split(
+//       "**Correct answer:**"
+//     );
+
+//     // Obtenemos todas las líneas de la pregunta y las limpiamos
+//     const questionLines = questionPart
+//       .trim()
+//       .split("\n")
+//       .filter((line) => line.trim() !== "");
+
+//     // La primera línea es la pregunta
+//     const questionText = questionLines[0].trim();
+
+//     // Revisa si hay texto adicional después de la pregunta y antes de las opciones
+//     let additionalText = "";
+//     let optionsStartIndex = 1;
+
+//     if (!questionLines[1].startsWith("(A)")) {
+//       additionalText = questionLines[1].trim();
+//       optionsStartIndex = 2;
+//     }
+
+//     // Capturamos las opciones, asegurando que se incluyan todas
+//     const options = questionLines.slice(optionsStartIndex).map((option) => {
+//       return option.trim();
+//     });
+
+//     // Extraemos la respuesta correcta entre paréntesis
+//     const correctAnswer = correctAnswerPart.match(/\((.*?)\)/)[1].trim();
+
+//     return {
+//       question: questionText,
+//       additionalText: additionalText || null, // Si no hay texto adicional, dejamos null
+//       options: options,
+//       correctAnswer: correctAnswer,
+//     };
+//   });
+// }
 
 // export function parseQuestions(content) {
 //   // Dividimos el contenido por cada pregunta identificando el formato de Question seguido por un número
