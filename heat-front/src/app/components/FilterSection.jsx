@@ -5,11 +5,10 @@ export default function FilterSection({
   setSelectedUser,
   setSelectedStatus,
 }) {
-  // Create a unique list of users
   const uniqueUsers = Array.from(
     new Map(
       students
-        .filter((student) => student.userFirstName && student.userLastName) // Filter out students without a user
+        .filter((student) => student.userFirstName && student.userLastName)
         .map((student) => [
           student.userId,
           `${student.userFirstName} ${student.userLastName}`,
