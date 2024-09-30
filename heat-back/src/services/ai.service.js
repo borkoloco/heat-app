@@ -41,7 +41,7 @@ const generateQuestions = async () => {
   const requestBody = {
     instances: [{ prompt }],
     parameters: {
-      temperature: 0.7,
+      temperature: 0.9,
       maxOutputTokens: 512,
       topK: 20,
       topP: 0.95,
