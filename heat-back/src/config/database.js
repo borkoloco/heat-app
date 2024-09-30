@@ -1,15 +1,30 @@
 const { Sequelize } = require("sequelize");
 
 const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
+  // `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/menu`,
+  `${DB_DEPLOY}`,
   {
-    host: process.env.DB_HOST,
-    dialect: "postgres",
-    logging: false,
+    logging: false, // set to console.log to see the raw SQL queries
+    native: false, // lets Sequelize know we can use pg-native for ~30% more speed
+    dialectmodule: pg, //agregue esto
+    dialectOptions: {
+      ssl: {
+        require: true,
+      },
+    },
   }
 );
+
+// const sequelize = new Sequelize(
+//   process.env.DB_NAME,
+//   process.env.DB_USER,
+//   process.env.DB_PASSWORD,
+//   {
+//     host: process.env.DB_HOST,
+//     dialect: "postgres",
+//     logging: false,
+//   }
+// );
 
 sequelize
   .authenticate()
