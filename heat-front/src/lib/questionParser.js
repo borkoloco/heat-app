@@ -1,40 +1,83 @@
 export function parseQuestions(content) {
-  // Split the content by "Question" to separate each block
+  // Dividimos el contenido por cada pregunta identificando el formato de Question seguido por un número
   const questionBlocks = content.split(/\*\*Question\s*\d+:\*\*/);
 
   return questionBlocks.slice(1).map((block) => {
-    // Split the block into question and correct answer parts
+    // Dividimos la pregunta y la parte de la respuesta correcta
     const [questionPart, correctAnswerPart] = block.split(
       "**Correct answer:**"
     );
 
-    // Extract the question text and any additional phrases or lines before options
+    // Extraemos todas las líneas de la pregunta
     const questionLines = questionPart
       .trim()
       .split("\n")
       .filter((line) => line.trim() !== "");
 
-    // Find the first line that is not part of the options, which will be the question text
+    // La primera línea es la pregunta
     const questionText = questionLines[0].trim();
-    const additionalText = questionLines[1] ? questionLines[1].trim() : ""; // If there's extra text
 
-    // Extract options by looking for lines that start with the options (A), (B), etc.
-    const optionsStartIndex = additionalText ? 2 : 1; // If there's additional text, options start after it
+    // Si hay texto adicional después de la pregunta, lo capturamos
+    const additionalText =
+      questionLines[1] && !questionLines[1].startsWith("(A)")
+        ? questionLines[1].trim()
+        : "";
+
+    // Las opciones son las líneas que empiezan con (A), (B), (C), (D)
+    const optionsStartIndex = additionalText ? 2 : 1;
     const options = questionLines
-      .slice(optionsStartIndex) // Options should start after the question and additional text (if present)
+      .slice(optionsStartIndex)
       .map((option) => option.trim());
 
-    // Extract the correct answer from the "Correct answer" part
+    // Obtenemos la respuesta correcta entre paréntesis
     const correctAnswer = correctAnswerPart.match(/\((.*?)\)/)[1];
 
     return {
       question: questionText,
-      additionalText: additionalText || null, // Include any additional text if present
+      additionalText: additionalText || null, // Incluimos el texto adicional si existe
       options: options,
       correctAnswer: correctAnswer,
     };
   });
 }
+
+// export function parseQuestions(content) {
+//   // Split the content by "Question" to separate each block
+//   const questionBlocks = content.split(/\*\*Question\s*\d+:\*\*/);
+
+//   return questionBlocks.slice(1).map((block) => {
+//     // Split the block into question and correct answer parts
+//     const [questionPart, correctAnswerPart] = block.split(
+//       "**Correct answer:**"
+//     );
+
+//     // Extract the question text and any additional phrases or lines before options
+//     const questionLines = questionPart
+//       .trim()
+//       .split("\n")
+//       .filter((line) => line.trim() !== "");
+
+//     // Find the first line that is not part of the options, which will be the question text
+//     const questionText = questionLines[0].trim();
+//     const additionalText = questionLines[1] ? questionLines[1].trim() : ""; // If there's extra text
+
+//     // Extract options by looking for lines that start with the options (A), (B), etc.
+//     const optionsStartIndex = additionalText ? 2 : 1; // If there's additional text, options start after it
+//     const options = questionLines
+//       .slice(optionsStartIndex) // Options should start after the question and additional text (if present)
+//       .map((option) => option.trim());
+
+//     // Extract the correct answer from the "Correct answer" part
+//     const correctAnswer = correctAnswerPart.match(/\((.*?)\)/)[1];
+
+//     return {
+//       question: questionText,
+//       additionalText: additionalText || null, // Include any additional text if present
+//       options: options,
+//       correctAnswer: correctAnswer,
+//     };
+//   });
+// }
 
 // export function parseQuestions(content) {
 //   // Split the content by "Question" to separate each block
