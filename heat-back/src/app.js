@@ -10,7 +10,13 @@ const aiRouter = require("./routes/ai.router");
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: "https://heat-app.vercel.app",
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(express.json());
 
 app.use((req, res, next) => {
