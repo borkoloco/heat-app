@@ -30,7 +30,9 @@ export default function QuestionsPage() {
     const getQuestions = async () => {
       try {
         const data = await fetchQuestions();
+
         const parsedQuestions = parseQuestions(data.questions);
+
         setQuestions(parsedQuestions);
 
         const correctAns = parsedQuestions.map((q) => q.correctAnswer);
@@ -86,7 +88,7 @@ export default function QuestionsPage() {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
       {questions.length > 0 ? (
         <QuestionCard
           question={questions[currentQuestionIndex].question}
@@ -99,18 +101,4 @@ export default function QuestionsPage() {
       )}
     </div>
   );
-  // return (
-  //   <div className="h-screen flex items-center justify-center bg-gray-100">
-  //     {questions.length > 0 ? (
-  //       <QuestionCard
-  //         question={questions[currentQuestionIndex].question}
-  //         options={questions[currentQuestionIndex].options}
-  //         questionNumber={currentQuestionIndex + 1}
-  //         onAnswerSelected={handleAnswer}
-  //       />
-  //     ) : (
-  //       <div>Cargando preguntas...</div>
-  //     )}
-  //   </div>
-  // );
 }

@@ -13,7 +13,7 @@ const getQuestions = async (req, res) => {
 
     const questionsContent = questions.content;
 
-    // console.log(questionsContent);
+    console.log(questionsContent);
 
     res.status(200).json({ questions: questionsContent });
   } catch (error) {
