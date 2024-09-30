@@ -1,7 +1,8 @@
 const { Sequelize } = require("sequelize");
 const pg = require("pg");
 
-const sequelize = new Sequelize(process.env.DB_DEPLOY, {
+// const sequelize = new Sequelize(process.env.DB_DEPLOY, {
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
   logging: false,
   native: false,
   dialectmodule: pg,
