@@ -1,14 +1,14 @@
 export function parseQuestions(content) {
-  // Dividimos el contenido por cada pregunta identificando el formato de Question seguido por un número
+  // Dividimos el contenido por cada pregunta
   const questionBlocks = content.split(/\*\*Question\s*\d+:\*\*/);
 
   return questionBlocks.slice(1).map((block) => {
-    // Dividimos la pregunta y la parte de la respuesta correcta
+    // Dividimos la parte de la pregunta y la parte de la respuesta correcta
     const [questionPart, correctAnswerPart] = block.split(
       "**Correct answer:**"
     );
 
-    // Extraemos todas las líneas de la pregunta
+    // Obtenemos todas las líneas de la pregunta y las limpiamos
     const questionLines = questionPart
       .trim()
       .split("\n")
@@ -17,29 +17,74 @@ export function parseQuestions(content) {
     // La primera línea es la pregunta
     const questionText = questionLines[0].trim();
 
-    // Si hay texto adicional después de la pregunta, lo capturamos
-    const additionalText =
-      questionLines[1] && !questionLines[1].startsWith("(A)")
-        ? questionLines[1].trim()
-        : "";
+    // Revisa si hay texto adicional después de la pregunta y antes de las opciones
+    let additionalText = "";
+    let optionsStartIndex = 1;
 
-    // Las opciones son las líneas que empiezan con (A), (B), (C), (D)
-    const optionsStartIndex = additionalText ? 2 : 1;
-    const options = questionLines
-      .slice(optionsStartIndex)
-      .map((option) => option.trim());
+    if (!questionLines[1].startsWith("(A)")) {
+      additionalText = questionLines[1].trim();
+      optionsStartIndex = 2;
+    }
 
-    // Obtenemos la respuesta correcta entre paréntesis
-    const correctAnswer = correctAnswerPart.match(/\((.*?)\)/)[1];
+    // Capturamos las opciones, asegurando que se incluyan todas
+    const options = questionLines.slice(optionsStartIndex).map((option) => {
+      return option.trim();
+    });
+
+    // Extraemos la respuesta correcta entre paréntesis
+    const correctAnswer = correctAnswerPart.match(/\((.*?)\)/)[1].trim();
 
     return {
       question: questionText,
-      additionalText: additionalText || null, // Incluimos el texto adicional si existe
+      additionalText: additionalText || null, // Si no hay texto adicional, dejamos null
       options: options,
       correctAnswer: correctAnswer,
     };
   });
 }
+
+// export function parseQuestions(content) {
+//   // Dividimos el contenido por cada pregunta identificando el formato de Question seguido por un número
+//   const questionBlocks = content.split(/\*\*Question\s*\d+:\*\*/);
+
+//   return questionBlocks.slice(1).map((block) => {
+//     // Dividimos la pregunta y la parte de la respuesta correcta
+//     const [questionPart, correctAnswerPart] = block.split(
+//       "**Correct answer:**"
+//     );
+
+//     // Extraemos todas las líneas de la pregunta
+//     const questionLines = questionPart
+//       .trim()
+//       .split("\n")
+//       .filter((line) => line.trim() !== "");
+
+//     // La primera línea es la pregunta
+//     const questionText = questionLines[0].trim();
+
+//     // Si hay texto adicional después de la pregunta, lo capturamos
+//     const additionalText =
+//       questionLines[1] && !questionLines[1].startsWith("(A)")
+//         ? questionLines[1].trim()
+//         : "";
+
+//     // Las opciones son las líneas que empiezan con (A), (B), (C), (D)
+//     const optionsStartIndex = additionalText ? 2 : 1;
+//     const options = questionLines
+//       .slice(optionsStartIndex)
+//       .map((option) => option.trim());
+
+//     // Obtenemos la respuesta correcta entre paréntesis
+//     const correctAnswer = correctAnswerPart.match(/\((.*?)\)/)[1];
+
+//     return {
+//       question: questionText,
+//       additionalText: additionalText || null, // Incluimos el texto adicional si existe
+//       options: options,
+//       correctAnswer: correctAnswer,
+//     };
+//   });
+// }
 
 // export function parseQuestions(content) {
 //   // Split the content by "Question" to separate each block
