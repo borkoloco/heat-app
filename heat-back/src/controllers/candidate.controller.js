@@ -5,6 +5,7 @@ const {
 } = require("../services/email.service");
 const Candidate = require("../models/candidate.model");
 const Response = require("../models/response.model");
+const User = require("../models/user.model");
 
 const createCandidate = async (req, res) => {
   try {
@@ -20,12 +21,36 @@ const createCandidate = async (req, res) => {
       lastName,
       email,
       userId,
+      reminder: false,
     });
 
     res.status(201).json(candidate);
   } catch (error) {
+    if (error.message === "Email already registered") {
+      return res
+        .status(400)
+        .json({ error: "Candidate with this email already exists" });
+    }
+
     console.log(error);
     res.status(500).json({ error: "Error creating candidate" });
+  }
+};
+
+const deleteCandidate = async (req, res) => {
+  const { candidateId } = req.params;
+
+  try {
+    const result = await candidateService.deleteCandidateAndResponses(
+      candidateId
+    );
+    res.status(200).json(result);
+  } catch (error) {
+    if (error.message === "Candidate not found") {
+      return res.status(404).json({ error: "Candidate not found" });
+    }
+    console.error(error);
+    res.status(500).json({ error: "Error deleting candidate and responses" });
   }
 };
 
@@ -49,11 +74,7 @@ const sendTestLink = async (req, res) => {
       return res.status(404).json({ error: "Candidate not found" });
     }
 
-    if (candidate.reminder === null) {
-      candidate.reminder = false;
-    } else if (candidate.reminder === false) {
-      candidate.reminder = true;
-    }
+    candidate.reminder = true;
 
     await sendTestLinkEmail(candidate.email, testLink);
     await candidate.save();
@@ -80,10 +101,16 @@ const sendTestResults = async (req, res) => {
 const getCandidatesWithResults = async (req, res) => {
   try {
     const candidates = await Candidate.findAll({
-      include: {
-        model: Response,
-        as: "responses",
-      },
+      include: [
+        {
+          model: Response,
+          as: "responses",
+        },
+        {
+          model: User,
+          attributes: ["firstName", "lastName", "uuid"],
+        },
+      ],
     });
 
     const candidatesWithResults = candidates.map((candidate) => {
@@ -97,6 +124,9 @@ const getCandidatesWithResults = async (req, res) => {
         audioScore: response ? response.responseAudio : null,
         finalResult: response ? response.finalResult : null,
         status: response ? response.status : null,
+        userFirstName: candidate.User ? candidate.User.firstName : null,
+        userLastName: candidate.User ? candidate.User.lastName : null,
+        userId: candidate.User ? candidate.User.uuid : null,
       };
     });
 
@@ -144,4 +174,5 @@ module.exports = {
   getCandidatesByUser,
   getCandidatesWithResults,
   checkCandidateStatus,
+  deleteCandidate,
 };

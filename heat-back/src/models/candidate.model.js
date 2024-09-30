@@ -26,7 +26,7 @@ const Candidate = sequelize.define(
     },
     reminder: {
       type: DataTypes.BOOLEAN,
-      defaultValue: null,
+      defaultValue: false,
     },
 
     userId: {

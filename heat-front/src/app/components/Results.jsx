@@ -8,7 +8,7 @@ export default function Result() {
 
   useEffect(() => {
     if (id) {
-      fetch(`/api/responses/${id}`)
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/responses/${id}`)
         .then((res) => res.json())
         .then((data) => setResult(data));
     }

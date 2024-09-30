@@ -24,7 +24,7 @@ export default function StartTest() {
   const checkCandidateStatus = async (candidateId) => {
     try {
       const res = await fetch(
-        `http://localhost:4000/api/candidates/status/${candidateId}`
+        `${process.env.NEXT_PUBLIC_API_URL}/candidates/status/${candidateId}`
       );
       const data = await res.json();
 
