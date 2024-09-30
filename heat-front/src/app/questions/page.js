@@ -62,6 +62,8 @@ export default function QuestionsPage() {
       let score = 0;
       answers.forEach((answer, index) => {
         if (answer === correctAnswers[index]) {
+          console.log(answer);
+          console.log(correctAnswers);
           score++;
         }
       });
