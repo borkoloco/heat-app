@@ -11,10 +11,10 @@ const aiRouter = require("./routes/ai.router");
 const app = express();
 
 const corsOptions = {
-  origin: "https://heat-app.vercel.app", // Change this to allow your frontend
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"], // Allow all necessary methods
-  credentials: true, // Allow credentials (cookies, headers, etc.)
-  allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept"], // Explicitly allow necessary headers
+  origin: "https://heat-app.onrender.com/",
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  credentials: true,
+  allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept"],
 };
 
 app.use(cors(corsOptions));
