@@ -99,4 +99,18 @@ export default function QuestionsPage() {
       )}
     </div>
   );
+  // return (
+  //   <div className="h-screen flex items-center justify-center bg-gray-100">
+  //     {questions.length > 0 ? (
+  //       <QuestionCard
+  //         question={questions[currentQuestionIndex].question}
+  //         options={questions[currentQuestionIndex].options}
+  //         questionNumber={currentQuestionIndex + 1}
+  //         onAnswerSelected={handleAnswer}
+  //       />
+  //     ) : (
+  //       <div>Cargando preguntas...</div>
+  //     )}
+  //   </div>
+  // );
 }
