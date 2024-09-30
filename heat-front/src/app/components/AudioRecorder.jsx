@@ -14,8 +14,8 @@ export default function AudioRecorder() {
   const recorderRef = useRef(null);
   const router = useRouter();
 
-  console.log(candidateId);
-  console.log(testScore);
+  // console.log(candidateId);
+  // console.log(testScore);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -82,9 +82,10 @@ export default function AudioRecorder() {
 
   return (
     <div className="h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
-      <h1 className="text-3xl font-bold mb-6">Audio Recorder</h1>
+      <h1 className="text-3xl font-bold mb-6">Pronunciation Test</h1>
       <p className="mb-4 text-lg">
-        The quick brown fox jumps over the lazy dog.
+        Read the following setence: "The quick brown fox jumps over the lazy
+        dog." Once you are done, press Stop and Upload.
       </p>
       {recording ? (
         <button

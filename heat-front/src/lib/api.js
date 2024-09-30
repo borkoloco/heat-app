@@ -2,6 +2,7 @@ export const fetchQuestions = async () => {
   const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/ai/questions");
   if (!res.ok) throw new Error("Error al obtener las preguntas");
   const data = await res.json();
+  // console.log(data);
 
   return data;
 };
