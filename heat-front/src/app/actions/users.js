@@ -1,15 +1,14 @@
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
 export const fetchDashboardData = async (token) => {
   try {
-    const res = await fetch(
-      process.env.NEXT_PUBLIC_API_URL + "/users/dashboard",
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const res = await fetch(`${BACKEND_URL}/users/dashboard`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (res.status === 401 || res.status === 403) {
       return { error: "Unauthorized" };
