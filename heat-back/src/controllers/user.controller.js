@@ -30,7 +30,10 @@ const loginUser = async (req, res) => {
     const token = jwt.sign({ id: user.uuid }, process.env.JWT_SECRET, {
       expiresIn: "24h",
     });
-    res.status(200).json({ token, user });
+
+    const { password: pwd, ...userWithoutPassword } = user.dataValues;
+
+    res.status(200).json({ token, user: userWithoutPassword });
   } catch (error) {
     res.status(500).json({ error: "Error en el login" });
   }
