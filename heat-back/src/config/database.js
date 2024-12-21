@@ -5,7 +5,7 @@ const pg = require("pg");
 // //RAILWAY
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: "postgres",
-  // protocol: "postgres",
+  protocol: "postgres",
   dialectOptions: {
     ssl: {
       require: true,
@@ -13,6 +13,8 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
     },
   },
 });
+
+console.log(process.env.DATABASE_URL);
 
 // const sequelize = new Sequelize(
 //   process.env.DB_NAME,
