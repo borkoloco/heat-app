@@ -18,12 +18,24 @@ const generateQuestions = async () => {
     );
   }
 
+  // const prompt = `
+  // Generate 3 English grammar multiple-choice questions in the following format:
+
+  // **Question1**{Question text here}**OPTIONS**(A){Option A}**(B){Option B}**(C){Option C}**(D){Option D}**Answer1{Correct Option (A, B, C, or D)}
+
+  // Make sure to include exactly 4 options and use the correct structure without any extra spaces.
+  // `;
   const prompt = `
-  Generate 3 English grammar multiple-choice questions in the following format:
+Generate a set of three multiple-choice grammar questions. Format the output as follows:
 
-  **Question1**{Question text here}**OPTIONS**(A){Option A}**(B){Option B}**(C){Option C}**(D){Option D}**Answer1{Correct Option (A, B, C, or D)}
+**Question1** [Your question here] **OPTIONS**(A){Option A}**(B){Option B}**(C){Option C}**(D){Option D}**Answer1{Correct Option Letter}
 
-  Make sure to include exactly 4 options and use the correct structure without any extra spaces.
+**Question2** [Your question here] **OPTIONS**(A){Option A}**(B){Option B}**(C){Option C}**(D){Option D}**Answer2{Correct Option Letter}
+
+**Question3** [Your question here] **OPTIONS**(A){Option A}**(B){Option B}**(C){Option C}**(D){Option D}**Answer3{Correct Option Letter}
+
+Ensure the options are relevant to the question, and include exactly one correct answer.
+
   `;
 
   const requestBody = {
