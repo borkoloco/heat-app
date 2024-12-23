@@ -37,6 +37,7 @@ export default function QuestionsPage() {
 
         const correctAns = parsedQuestions.map((q) => q.correctAnswer);
         setCorrectAnswers(correctAns);
+        console.log(correctAns);
       } catch (error) {
         console.error("Error al obtener las preguntas:", error);
       }
@@ -45,9 +46,7 @@ export default function QuestionsPage() {
   }, []);
 
   const handleAnswer = (answer) => {
-    const answerLetter = answer.match(/\((.)\)/)[1];
-
-    setAnswers([...answers, answerLetter]);
+    setAnswers([...answers, answer]);
 
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);

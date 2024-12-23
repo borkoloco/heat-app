@@ -1,28 +1,29 @@
 export function parseQuestions(content) {
-  const questionBlocks = content.split(/\*\*Question\d+:\*\*/).slice(1);
-  return questionBlocks.map((block, index) => {
-    const questionMatch = block.match(/(.*?)\*\*OPTIONS:\*\*/s);
-    const questionText = questionMatch ? questionMatch[1].trim() : null;
+  const questionBlocks = content.split("**Question");
 
-    const optionsMatch = block.match(
-      /\*\*OPTIONS:\*\*(.*?)\*\*Answer\d+:\*\*/s
-    );
-    const optionsText = optionsMatch ? optionsMatch[1].trim() : null;
+  return questionBlocks
+    .filter((block) => block.trim())
+    .map((block) => {
+      const questionMatch = block.match(/(\d+)\*\*(.*?)\*\*OPTIONS\*\*/s);
+      const questionText = questionMatch ? questionMatch[2].trim() : null;
 
-    const answerMatch = block.match(/\*\*Answer\d+:\*\*\s*\((.)\)/);
-    const correctAnswer = answerMatch ? answerMatch[1].trim() : null;
+      const optionsMatch = block.match(
+        /\*\*OPTIONS\*\*(.*?)\*\*Answer\d+\{([A-D])\}/s
+      );
+      const optionsText = optionsMatch ? optionsMatch[1].trim() : null;
+      const correctAnswer = optionsMatch ? optionsMatch[2].trim() : null;
 
-    const options = optionsText
-      ? optionsText
-          .split("\n")
-          .map((option) => option.trim())
-          .filter((option) => option)
-      : [];
+      const options = optionsText
+        ? optionsText
+            .split("**")
+            .map((opt) => opt.replace(/\([A-D]\)\{(.*?)\}/, "$1").trim())
+            .filter(Boolean)
+        : [];
 
-    return {
-      question: questionText,
-      options: options,
-      correctAnswer: correctAnswer,
-    };
-  });
+      return {
+        question: questionText,
+        options,
+        correctAnswer,
+      };
+    });
 }
