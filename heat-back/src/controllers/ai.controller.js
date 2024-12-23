@@ -10,12 +10,7 @@ const axios = require("axios");
 const getQuestions = async (req, res) => {
   try {
     const questions = await aiService.generateQuestions();
-
-    const questionsContent = questions.content;
-
-    console.log(questionsContent);
-
-    res.status(200).json({ questions: questionsContent });
+    res.status(200).json({ questions: questions });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -23,7 +18,7 @@ const getQuestions = async (req, res) => {
 
 const submitTest = async (req, res) => {
   const { answers } = req.body;
-  const correctAnswers = ["A", "C", "B"]; // Simulación
+  const correctAnswers = ["A", "C", "B"];
 
   try {
     const score = aiService.evaluateTest(answers, correctAnswers);
