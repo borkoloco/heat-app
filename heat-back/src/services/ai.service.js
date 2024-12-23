@@ -3,55 +3,71 @@ const { GoogleAuth } = require("google-auth-library");
 const fs = require("fs");
 const sdk = require("microsoft-cognitiveservices-speech-sdk");
 
-// Verificar que la variable de entorno esté configurada correctamente
 if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
   throw new Error("El cuestionario no esta disponible, intenta mas tarde.");
 }
 
 const generateQuestions = async () => {
-  const projectId = process.env.GOOGLE_PROJECT_ID;
-  const location = "us-central1";
-  const model = "text-bison";
+  const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
+  const apiKey = process.env.AZURE_OPENAI_KEY;
+  const modelName = process.env.AZURE_OPENAI_MODEL || "gpt-35-turbo";
 
-  const auth = new GoogleAuth({
-    keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-    scopes: ["https://www.googleapis.com/auth/cloud-platform"],
-  });
-
-  const accessToken = await auth.getAccessToken();
-  const url = `https://us-central1-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/${model}:predict`;
+  if (!endpoint || !apiKey) {
+    throw new Error(
+      "Configuración de Azure OpenAI no encontrada. Verifica las variables de entorno."
+    );
+  }
 
   const prompt = `
   Generate 3 English grammar multiple-choice questions in the following format:
-  
-  **Question1**{here comes the question1}**OPTIONS**(A){Option A}**(B){Option B}**(C){Option C}**(D){OptionD}**Answer1{correct answer}**Question2**{here comes the question2}**OPTIONS**(A){Option A}**(B){Option B}**(C){Option C}**(D){OptionD}**Answer2{correct answer}**Question3**{here comes the question}**OPTIONS**(A){Option A}**(B){Option B}**(C){Option C}**(D){OptionD}**Answer3{correct answer}**
-  
 
-  Make sure each question follows this exact format.
+  **Question1**{Question text here}**OPTIONS**(A){Option A}**(B){Option B}**(C){Option C}**(D){Option D}**Answer1{Correct Option (A, B, C, or D)}
+
+  Make sure to include exactly 4 options and use the correct structure without any extra spaces.
   `;
 
   const requestBody = {
-    instances: [{ prompt }],
-    parameters: {
-      temperature: 0.9,
-      maxOutputTokens: 512,
-      topK: 20,
-      topP: 0.95,
-    },
+    messages: [
+      {
+        role: "system",
+        content:
+          "You are an assistant specialized in creating educational grammar questions.",
+      },
+      {
+        role: "user",
+        content: prompt,
+      },
+    ],
+    max_tokens: 512,
+    temperature: 0.7,
+    top_p: 0.9,
   };
 
   try {
-    const response = await axios.post(url, requestBody, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-    });
-    console.log(response.data.predictions[0]);
-    return response.data.predictions[0];
+    const response = await axios.post(
+      `${endpoint}/openai/deployments/${modelName}/chat/completions?api-version=2024-08-01-preview`,
+
+      requestBody,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "api-key": apiKey,
+        },
+      }
+    );
+
+    const result = response.data.choices[0].message.content.trim();
+
+    console.log("Preguntas generadas:\n", result);
+    return result;
   } catch (error) {
-    console.error("Error generating questions with Vertex AI:", error.message);
-    throw new Error("Question generation failed.");
+    console.error(
+      "Error al generar preguntas con Azure OpenAI:",
+      error.message
+    );
+    throw new Error(
+      "No se pudo generar el cuestionario. Intenta nuevamente más tarde."
+    );
   }
 };
 

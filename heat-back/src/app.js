@@ -12,6 +12,7 @@ const app = express();
 
 const corsOptions = {
   origin: "https://heat-app.onrender.com",
+  // origin: "http://localhost:3000",
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   credentials: true,
   allowedHeaders: [
