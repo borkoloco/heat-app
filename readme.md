@@ -1,4 +1,4 @@
-## HEAT APP - Howdy English Assessment Task
+## HEAT APP - Henry English Assessment Task
 
 Initial English Assestment task for candidates using AI to create questionnaire and correct the answers provided by the candidate.
 
