@@ -88,6 +88,11 @@ export default function QuestionsPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
+      <h1 className="text-2xl font-bold mb-2">Grammar Test (3 questions)</h1>
+      <p className="text-sm text-gray-600 mb-4">
+        Refresh the page if unable to see the questions or click the link in the
+        email again. Thank you.
+      </p>
       {questions.length > 0 ? (
         <QuestionCard
           question={questions[currentQuestionIndex].question}
